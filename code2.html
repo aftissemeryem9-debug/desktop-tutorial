@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoopMaroc - Plateforme des Coopératives</title>
+    <!-- خطوط عصرية تدعم العربية والفرنسية -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* إعدادات عامة */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Cairo', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #fcfcfc;
+            color: #2c3e50;
+            padding-top: 115px; /* مساحة باش ما تغطيش الـ Navbar على السيت */
+        }
+
+        /* اتجاه الكتابة للعربية */
+        body.rtl {
+            direction: rtl;
+        }
+
+        /* السطر الفوقاني (Top Bar) ديال اللغات */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 40px;
+            background: #1e293b;
+            z-index: 1001;
+            display: flex;
+            justify-content: center;
+        }
+
+        .top-bar-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 20px;
+            gap: 15px;
+        }
+
+        body.rtl .top-bar-container {
+            justify-content: flex-start;
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .lang-btn:hover, .lang-btn.active {
+            color: #27ae60;
+        }
+
+        /* 1. الـ Navbar */
+        .navbar {
+            position: fixed;
+            top: 40px; /* لاصقة تحت الـ Top bar */
+            width: 100%;
+            height: 75px;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+        }
+
+        .nav-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        body.rtl .nav-container {
+            flex-direction: row-reverse;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: #0f172a;
+        }
+
+        .logo span { color: #27ae60; }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 10px;
+        }
+
+        body.rtl .nav-links {
+            flex-direction: row-reverse;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #64748b;
+            padding: 10px 15px;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #27ae60;
+        }
+
+        /* 2. سيكسيون الـ Accueil */
+        .hero-section {
+            height: 75vh;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        body.rtl .hero-section {
+            flex-direction: row-reverse;
+        }
+
+        .hero-content { max-width: 550px; }
+        .hero-content h1 { font-size: 2.8rem; margin-bottom: 20px; color: #0f172a; }
+        .hero-content h1 span { color: #27ae60; }
+        .hero-content p { font-size: 1.1rem; color: #475569; line-height: 1.6; }
+
+        .image-placeholder {
+            width: 450px;
+            height: 350px;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #2b7a4b;
+        }
+
+        /* 3. سيكسيون الـ À propos */
+        .about-section {
+            background: #f1f5f9;
+            padding: 100px 20px;
+            text-align: center;
+        }
+
+        .about-container { max-width: 800px; margin: 0 auto; }
+        .about-section h2 { font-size: 2.2rem; margin-bottom: 20px; color: #0f172a; }
+        .mission-text { font-size: 1.15rem; color: #334155; line-height: 1.8; margin-bottom: 35px; }
+
+        /* البوطون الكبيرة للـ Pop-up */
+        .btn-trigger {
+            background: #27ae60;
+            color: white;
+            padding: 15px 35px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+            transition: 0.3s ease;
+        }
+
+        .btn-trigger:hover {
+            background: #219653;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        /* 4. الـ Pop-up (Modal) Design */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: 0.4s ease;
+        }
+
+        .modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+        .modal-box {
+            background: white;
+            width: 90%; max-width: 650px;
+            padding: 40px; border-radius: 20px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transform: translateY(-50px); transition: 0.4s ease;
+        }
+        .modal-overlay.open .modal-box { transform: translateY(0); }
+
+        .close-modal {
+            position: absolute; top: 20px; right: 25px;
+            font-size: 2rem; cursor: pointer; color: #94a3b8; transition: 0.2s;
+        }
+        body.rtl .close-modal { left: 25px; right: auto; }
+        .close-modal:hover { color: #334155; }
+
+        /* الديزاين ديال الـ Timeline (1, 2, 3) */
+        .timeline-container {
+            display: flex; justify-content: space-between;
+            position: relative; margin-bottom: 40px;
+        }
+        body.rtl .timeline-container { flex-direction: row-reverse; }
+
+        .timeline-line {
+            position: absolute; top: 20px; left: 0; width: 100%; height: 4px;
+            background: #e2e8f0; z-index: 1;
+        }
+
+        .timeline-step {
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column; align-items: center;
+            cursor: pointer; width: 80px;
+        }
+
+        .timeline-step .circle {
+            width: 40px; height: 40px; background: #e2e8f0; color: #64748b;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 600; margin-bottom: 8px; transition: 0.3s;
+        }
+
+        .timeline-step span { font-size: 0.85rem; color: #64748b; font-weight: 500; }
+
+        .timeline-step.active .circle { background: #27ae60; color: white; box-shadow: 0 0 10px rgba(39,174,96,0.4); }
+        .timeline-step.active span { color: #27ae60; font-weight: 600; }
+
+        /* لوحات الشرح داخل الـ Pop-up */
+        .step-panel { display: none; animation: fadeIn 0.4s ease forwards; text-align: left; }
+        body.rtl .step-panel { text-align: right; }
+        .step-panel.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .step-panel h3 { margin-bottom: 15px; color: #0f172a; }
+        .step-panel p { color: #475569; margin-bottom: 15px; }
+        .step-panel ul { margin-left: 20px; color: #475569; margin-bottom: 20px; line-height: 1.8; }
+        body.rtl .step-panel ul { margin-left: 0; margin-right: 20px; }
+
+        .btn-download {
+            display: inline-block; text-decoration: none; background: #3498db; color: white;
+            padding: 10px 20px; border-radius: 8px; font-weight: 500; transition: 0.3s;
+        }
+        .btn-download:hover { background: #2980b9; }
+
+        /* ديزاين الـ Formulaire (المرحلة 3) */
+        .coop-form { display: flex; flex-direction: column; gap: 15px; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 0.9rem; font-weight: 500; color: #334155; }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; outline: none;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #27ae60; }
+        .form-group textarea { height: 80px; resize: none; }
+        .checkbox-group { flex-direction: row; align-items: center; gap: 10px; margin-top: 5px; }
+
+        .btn-submit {
+            background: #27ae60; color: white; border: none; padding: 12px;
+            border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.3s;
+        }
+        .btn-submit:hover { background: #219653; }
+
+        /* سيكسيونات خاوية لصحابك (زدت ليهم الطول باش يتحرك السيت) */
+        .empty-section { height: 80vh; display: flex; align-items: center; justify-content: center; background: #fff; border-top: 1px solid #eee; color: #ccc; }
+    </style>
+</head>
+<body>
+
+    <!-- السطر الفوقاني ديال تبدال اللغات -->
+    <div class="top-bar">
+        <div class="top-bar-container">
+            <button class="lang-btn active" id="btn-fr" onclick="changeLanguage('fr')">Français</button>
+            <button class="lang-btn" id="btn-ar" onclick="changeLanguage('ar')">العربية</button>
+        </div>
+    </div>
+
+    <!-- 1. الـ Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">Coop<span>Maroc</span></a>
+            <ul class="nav-links">
+                <li><a href="#accueil" class="nav-item active" id="lnk-accueil">Accueil</a></li>
+                <li><a href="#apropos" class="nav-item" id="lnk-apropos">À propos</a></li>
+                <li><a href="#salons" class="nav-item" id="lnk-salons">Salons</a></li>
+                <li><a href="#market" class="nav-item" id="lnk-market">Market</a></li>
+                <li><a href="#contact" class="nav-item" id="lnk-contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 2. سيكسيون الـ Accueil -->
+    <section id="accueil" class="hero-section">
+        <div class="hero-content">
+            <h1 id="txt-title">Bienvenue sur <span>CoopMaroc</span></h1>
+            <p id="txt-hero-p">La plateforme digitale officielle pour l'accompagnement et la création des coopératives au Maroc.</p>
+        </div>
+        <div class="hero-image">
+            <div class="image-placeholder">✨ CoopMaroc ✨</div>
+        </div>
+    </section>
+
+    <!-- 3. سيكسيون الـ À propos -->
+    <section id="apropos" class="about-section">
+        <div class="about-container">
+            <h2 id="txt-about-h2">À Propos de Nous</h2>
+            <p class="mission-text" id="txt-mission">
+                Notre mission est de simplifier les procédures administratives et juridiques pour la création de votre coopérative. Nous accompagnons les artisans, agriculteurs et entrepreneurs dans leurs démarches professionnelles pour lancer leurs projets en toute sécurité et à distance.
+            </p>
+            <button class="btn-trigger" id="openModalBtn">Créer une Coopérative</button>
+        </div>
+    </section>
+
+    <!-- سيكسيونات خاوية لصحابك ف الجروب -->
+    <section id="salons" class="empty-section"><h2 id="txt-salons-title">Espace Salons (Dédié aux collègues)</h2></section>
+    <section id="market" class="empty-section"><h2 id="txt-market-title">Espace Market (Dédié aux collègues)</h2></section>
+    <section id="contact" class="empty-section"><h2 id="txt-contact-title">Espace Contact (Dédié aux collègues)</h2></section>
+
+
+    <!-- 4. الـ Pop-up السحري (Modal) -->
+    <div class="modal-overlay" id="customModal">
+        <div class="modal-box">
+            <span class="close-modal" id="closeModalBtn">&times;</span>
+            
+            <!-- التايملاين تفاعلي 1، 2، 3 -->
+            <div class="timeline-container">
+                <div class="timeline-line"></div>
+                <div class="timeline-step active" data-step="1">
+                    <div class="circle">1</div>
+                    <span id="txt-step1-lbl">Idée</span>
+                </div>
+                <div class="timeline-step" data-step="2">
+                    <div class="circle">2</div>
+                    <span id="txt-step2-lbl">Documents</span>
+                </div>
+                <div class="timeline-step" data-step="3">
+                    <div class="circle">3</div>
+                    <span id="txt-step3-lbl">Inscription</span>
+                </div>
+            </div>
+
+            <div class="wizard-content">
+                <!-- الخطوة 1 -->
+                <div class="step-panel active" id="panel-1">
+                    <h3 id="txt-step1-h3">1. Valider votre Idée de Coopérative</h3>
+                    <p id="txt-step1-p">Pour créer une coopérative sur le terrain, vous devez d'abord :</p>
+                    <ul id="txt-step1-ul">
+                        <li>Rassembler au moins 5 personnes physiques.</li>
+                        <li>Définir l'activité principale (Agricole, Artisanat, etc.).</li>
+                        <li>Choisir un nom unique pour votre coopérative.</li>
+                    </ul>
+                </div>
+
+                <!-- الخطوة 2 -->
+                <div class="step-panel" id="panel-2">
+                    <h3 id="txt-step2-h3">2. Préparer les Documents Juridiques</h3>
+                    <p id="txt-step2-p">Voici les documents nécessaires à légaliser dans le monde réel :</p>
+                    <ul id="txt-step2-ul">
+                        <li>La Demande de dénomination (شهادة التسمية).</li>
+                        <li>Les Statuts de la coopérative (القانون الأساسي).</li>
+                        <li>La Liste des membres fondateurs.</li>
+                    </ul>
+                    <a href="#" class="btn-download" id="txt-download">⬇️ Télécharger un Modèle Word Prêt</a>
+                </div>
+
+                <!-- الخطوة 3 -->
+                <div class="step-panel" id="panel-3">
+                    <h3 id="txt-step3-h3">3. Formulaire de Création</h3>
+                    <form class="coop-form" onsubmit="alert('Demande envoyée !'); return false;">
+                        <div class="form-group">
+                            <label id="lbl-form-name">Nom de la Coopérative *</label>
+                            <input type="text" placeholder="Ex: Coopérative Argan" required id="input-name">
+                        </div>
+                        <div class="form-group">
+                            <label id="lbl-form-sec">Secteur d'Activité *</label>
+                            <select required id="select-sec">
+                                <option value="" id="opt-choose">Choisir...</option>
+                                <option id="opt-agri">Agriculture</option>
+                                <option id="opt-art">Artisanat</option>
+                                <option id="opt-ser">Services</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label id="lbl-form-miss">Mission de la Coopérative</label>
+                            <textarea placeholder="..." id="txt-area-miss"></textarea>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="hasLogo">
+                            <label for="hasLogo" id="lbl-form-logo">Avez-vous déjà un Logo ?</label>
+                        </div>
+                        <button type="submit" class="btn-submit" id="btn-submit-text">Envoyer la demande (Vers Excel)</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- كود الجافاسكريبت للتحكم والترجمة -->
+    <script>
+        // داتا ديال الترجمة بن الفرنسية والعربية
+        const translations = {
+            fr: {
+                lnkAccueil: "Accueil", lnkApropos: "À propos", lnkSalons: "Salons", lnkMarket: "Market", lnkContact: "Contact",
+                title: "Bienvenue sur <span>CoopMaroc</span>", heroP: "La plateforme digitale officielle pour l'accompagnement et la création des coopératives au Maroc.",
+                aboutH2: "À Propos de Nous", mission: "Notre mission est de simplifier les procédures administratives et juridiques pour la création de votre coopérative. Nous accompagnons les artisans, agriculteurs et entrepreneurs dans leurs démarches professionnelles pour lancer leurs projets en toute sécurité et à distance.",
+                btnTrigger: "Créer une Coopérative", salonsTitle: "Espace Salons (Dédié aux collègues)", marketTitle: "Espace Market (Dédié aux collègues)", contactTitle: "Espace Contact (Dédié aux collègues)",
+                step1Lbl: "Idée", step2Lbl: "Documents", step3Lbl: "Inscription",
+                step1H3: "1. Valider votre Idée de Coopérative", step1P: "Pour créer une coopérative sur le terrain, vous devez d'abord :",
+                step1Ul: "<li>Rassembler au moins 5 personnes physiques.</li><li>Définir l'activité principale (Agricole, Artisanat, etc.).</li><li>Choisir un nom unique pour votre coopérative.</li>",
+                step2H3: "2. Préparer les Documents Juridiques", step2P: "Voici les documents nécessaires à légaliser dans le monde réel :",
+                step2Ul: "<li>La Demande de dénomination (شهادة التسمية).</li><li>Les Statuts de la coopérative (القانون الأساسي).</li><li>La Liste des membres fondateurs.</li>",
+                download: "⬇️ Télécharger un Modèle Word Prêt", step3H3: "3. Formulaire de Création",
+                lblName: "Nom de la Coopérative *", lblSec: "Secteur d'Activité *", lblMiss: "Mission de la Coopérative", lblLogo: "Avez-vous déjà un Logo ?", btnSubmit: "Envoyer la demande (Vers Excel)",
+                placeholderName: "Ex: Coopérative Argan", placeholderMiss: "Décrivez l'objectif de votre coopérative...", optChoose: "Choisir...", optAgri: "Agriculture", optArt: "Artisanat", optSer: "Services"
+            },
+            ar: {
+                lnkAccueil: "الرئيسية", lnkApropos: "من نحن", lnkSalons: "المعارض", lnkMarket: "السوق", lnkContact: "الاتصال",
+                title: "مرحباً بكم في <span>CoopMaroc</span>", heroP: "المنصة الرقمية الرسمية لمواكبة وتأسيس التعاونيات في المغرب عن بُعد وببساطة.",
+                aboutH2: "من نحن", mission: "مهمتنا هي تبسيط المساطر الإدارية والقانونية لتأسيس تعاونيتكم. نحن نرافق الحرفيين، الفلاحين والمقاولين في خطواتهم المهنية لإطلاق مشاريعهم بكل أمان وبدون تعقيدات.",
+                btnTrigger: "تأسيس تعاونية", salonsTitle: "فضاء المعارض (خاص بالزملاء ف الجروب)", marketTitle: "فضاء السوق (خاص بالزملاء ف الجروب)", contactTitle: "فضاء الاتصال (خاص بالزملاء ف الجروب)",
+                step1Lbl: "الفكرة", step2Lbl: "الوثائق", step3Lbl: "التسجيل",
+                step1H3: "1. تحديد فكرة التعاونية", step1P: "لتأسيس تعاونية على أرض الواقع، يجب عليكم أولاً:",
+                step1Ul: "<li>جمع 5 أشخاص على الأقل.</li><li>تحديد النشاط الرئيسي (فلاحي، صناعة تقليدية، إلخ).</li><li>اختيار اسم فريد ومميز للتعاونية.</li>",
+                step2H3: "2. إعداد الوثائق القانونية", step2P: "إليكم الوثائق الضرورية المصادق عليها في الواقع:",
+                step2Ul: "<li>شهادة التسمية (المصادقة على الاسم).</li><li>القانون الأساسي للتعاونية.</li><li>لائحة الأعضاء المؤسسين.</li>",
+                download: "⬇️ تحميل نموذج وورد (Word) جاهز للتعديل", step3H3: "3. استمارة التأسيس",
+                lblName: "اسم التعاونية *", lblSec: "قطاع النشاط *", lblMiss: "هدف ورسالة التعاونية", lblLogo: "هل لديكم شعار (Logo) حالياً؟", btnSubmit: "إرسال الطلب (إلى الإكسيل)",
+                placeholderName: "مثال: تعاونية الأركان", placeholderMiss: "اشرح باختصار هدف التعاونية...", optChoose: "اختر القطاع...", optAgri: "الفلاحة", optArt: "الصناعة التقليدية", optSer: "الخدمات"
+            }
+        };
+
+        // دالة تغيير اللغة
+        function changeLanguage(lang) {
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${lang}`).classList.add('active');
+
+            if (lang === 'ar') {
+                document.body.classList.add('rtl');
+            } else {
+                document.body.classList.remove('rtl');
+            }
+
+            // تطبيق الترجمات على العناصر بـ ID
+            document.getElementById('lnk-accueil').innerText = translations[lang].lnkAccueil;
+            document.getElementById('lnk-apropos').innerText = translations[lang].lnkApropos;
+            document.getElementById('lnk-salons').innerText = translations[lang].lnkSalons;
+            document.getElementById('lnk-market').innerText = translations[lang].lnkMarket;
+            document.getElementById('lnk-contact').innerText = translations[lang].lnkContact;
+            document.getElementById('txt-title').innerHTML = translations[lang].title;
+            document.getElementById('txt-hero-p').innerText = translations[lang].heroP;
+            document.getElementById('txt-about-h2').innerText = translations[lang].aboutH2;
+            document.getElementById('txt-mission').innerText = translations[lang].mission;
+            document.getElementById('openModalBtn').innerText = translations[lang].btnTrigger;
+            document.getElementById('txt-salons-title').innerText = translations[lang].salonsTitle;
+            document.getElementById('txt-market-title').innerText = translations[lang].marketTitle;
+            document.getElementById('txt-contact-title').innerText = translations[lang].contactTitle;
+            document.getElementById('txt-step1-lbl').innerText = translations[lang].step1Lbl;
+            document.getElementById('txt-step2-lbl').innerText = translations[lang].step2Lbl;
+            document.getElementById('txt-step3-lbl').innerText = translations[lang].step3Lbl;
+            document.getElementById('txt-step1-h3').innerText = translations[lang].step1H3;
+            document.getElementById('txt-step1-p').innerText = translations[lang].step1P;
+            document.getElementById('txt-step1-ul').innerHTML = translations[lang].step1Ul;
+            document.getElementById('txt-step2-h3').innerText = translations[lang].step2H3;
+            document.getElementById('txt-step2-p').innerText = translations[lang].step2P;
+            document.getElementById('txt-step2-ul').innerHTML = translations[lang].step2Ul;
+            document.getElementById('txt-download').innerText = translations[lang].download;
+            document.getElementById('txt-step3-h3').innerText = translations[lang].step3H3;
+            document.getElementById('lbl-form-name').innerText = translations[lang].lblName;
+            document.getElementById('lbl-form-sec').innerText = translations[lang].lblSec;
+            document.getElementById('lbl-form-miss').innerText = translations[lang].lblMiss;
+            document.getElementById('lbl-form-logo').innerText = translations[lang].lblLogo;
+            document.getElementById('btn-submit-text').innerText = translations[lang].btnSubmit;
+            document.getElementById('input-name').placeholder = translations[lang].placeholderName;
+            document.getElementById('txt-area-miss').placeholder = translations[lang].placeholderMiss;
+            document.getElementById('opt-choose').innerText = translations[lang].optChoose;
+            document.getElementById('opt-agri').innerText = translations[lang].optAgri;
+            document.getElementById('opt-art').innerText = translations[lang].optArt;
+            document.getElementById('opt-ser').innerText = translations[lang].optSer;
+        }
+
+        // تفاعل الـ Pop-up والـ Timeline
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const customModal = document.getElementById('customModal');
+        const timelineSteps = document.querySelectorAll('.timeline-step');
+        const stepPanels = document.querySelectorAll('.step-panel');
+
+        openModalBtn.addEventListener('click', () => customModal.classList.add('open'));
+        closeModalBtn.addEventListener('click', () => customModal.classList.remove('open'));
+        window.addEventListener('click', (e) => { if (e.target === customModal) customModal.classList.remove('open'); });
+
+        timelineSteps.forEach(step => {
+            step.addEventListener('click', () => {
+                const stepNumber = step.getAttribute('data-step');
+                timelineSteps.forEach(s => s.classList.remove('active'));
+                step.classList.add('active');
+                stepPanels.forEach(panel => panel.classList.remove('active'));
+                document.getElementById(`panel-${stepNumber}`).classList.add('active');
+            });
+        });
+
+        // تأثير تلوين الروابط ف الـ Navbar فاش كايسكرولي ليزاتور
+        window.addEventListener('scroll', () => {
+            let current = "";
+            const sections = document.querySelectorAll('section');
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+            document.querySelectorAll('.nav-links a').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').includes(current)) {
+                    a.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
